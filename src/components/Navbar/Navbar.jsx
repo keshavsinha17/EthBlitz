@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { Link } from "react-router-dom";
 import "./Navbar.css";
 import logo from "../../assets/logo.png"
 import arrow_icon from "../../assets/arrow_icon.png"
@@ -31,18 +32,22 @@ const Navbar = () => {
             default: {
                 setCurrency({ name: "usd", symbol: "$" })
             }
+            // break;
 
         }
     }
     return (
         <div>
+
             <div className='navbar'>
-                <img
-                    src={logo}
-                    alt='logo'
-                    className='logo'></img>
+                <Link to={'/'}>
+                    <img
+                        src={logo}
+                        alt='logo'
+                        className='logo'></img>
+                </Link>
                 <ul>
-                    <li>Home</li>
+                    <Link to={'/'}>  <li>Home</li></Link>
                     <li>Watchlist</li>
                     <li>Transactions</li>
                     <li>Portfolio</li>
