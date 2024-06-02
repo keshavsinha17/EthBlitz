@@ -1,20 +1,44 @@
 import React, { useContext, useEffect, useState } from 'react'
 import "./Home.css";
 import { CoinContext } from '../../context/CoinContext';
+import{Link} from 'react-router-dom';
 const Home = () => {
     const { allCoin, currency } = useContext(CoinContext);
     const [displayCoin, setDisplayCoin] = useState([]);
+    const [input, setInput] = useState('');
+
+    const inputHandler = (event) => {
+        setInput(event.target.value)
+        if (event.target.value == '')
+            setDisplayCoin(allCoin);
+    }
+    const searchHandler = async (event) => {
+        event.preventDefault();
+        const coins = await allCoin.filter((item) => {
+            return item.name.toLowerCase().includes(input.toLowerCase())
+        })
+        setDisplayCoin(coins)
+    }
     useEffect(() => {
-        setDisplayCoin(allCoin)
-    },[allCoin])
+        setDisplayCoin(allCoin);
+    }, [allCoin])
     return (
         <div className='home'>
             <div className='hero'>
                 <h1>Virtual<br />Crypto MarketPlace</h1>
                 <p>Welcome to Forge of doing Dummy Crypto Transaction and Trades with real risk involved
                     without putting your credits at stake.Sign up now!!</p>
-                <form>
-                    <input type='text' placeholder='Search Coin'></input>
+                <form onSubmit={searchHandler}>
+                    <input
+                        list='coinlist'
+                        type='text' placeholder='Search Coin'
+                        value={input}
+                        onChange={inputHandler} required />
+                    <datalist id='coinlist'>
+                        {allCoin.map((item, index) => (
+                            <option key={index} value={item.name}
+                            />))}
+                    </datalist>
                     <button type='submit'>Search</button>
                 </form>
             </div>
@@ -26,18 +50,18 @@ const Home = () => {
                     <p style={{ textAlign: 'center' }}>24hr Change</p>
                     <p className='market-cap'>Market Cap</p>
                 </div>
-                {displayCoin.map((item,index)=>(
-                    <div className='table-layout' key={index}>
+                {displayCoin.slice(0, 10).map((item, index) => (
+                    <Link to={`/coin/${item.id}`} className='table-layout' key={index}>
                         <p>{item.market_cap_rank}</p>
                         <div>
-                            <img src={item.image} alt='coin'/>
-                            <p>{item.name+" - "+item.symbol}</p>
+                            <img src={item.image} alt='coin' />
+                            <p>{item.name + " - " + item.symbol}</p>
                         </div>
                         <p>{currency.symbol}{item.current_price.toLocaleString()}</p>
-                        <p className={item.price_change_percentage_24h>0?"green":"red"}>
-                        {Math.floor(item.price_change_percentage_24h*100)/100}</p>
+                        <p className={item.price_change_percentage_24h > 0 ? "green" : "red"}>
+                            {Math.floor(item.price_change_percentage_24h * 100) / 100}</p>
                         <p className='market-cap'>{currency.symbol}{item.market_cap.toLocaleString()}</p>
-                    </div>
+                    </Link>
                 ))}
 
             </div>
